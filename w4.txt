@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    int a = 5, b = 10, pid;
+    printf("Before fork a=%d b=%d \n", a, b);
+    pid = fork();
+    if (pid == 0) {
+        a = a + 1;
+        b = b + 1;
+        printf("In child a=%d b=%d \n", a, b);
+    } else {
+        sleep(1);
+        a = a - 1;
+        b = b - 1;
+        printf("In Parent a=%d b=%d \n", a, b);
+    }
+    return 0;
+}
+
+----- vfork
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    int a = 5, b = 10, pid;
+    printf("Before vfork a=%d b=%d \n", a, b);
+    pid = vfork();
+    if (pid == 0) {
+        a = a + 1;
+        b = b + 1;
+        printf("In child a=%d b=%d \n", a, b);
+        _exit(0); // Ensure the child process exits immediately
+    } else {
+        sleep(1); // Ensure child process runs first
+        a = a - 1;
+        b = b - 1;
+        printf("In Parent a=%d b=%d \n", a, b);
+    }
+    return 0;
+}
+
+----- oddeven
+
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    int pid, n, oddsum = 0, evensum = 0;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    pid = fork();
+    if (pid == 0) {
+        // Child process: Calculate the sum of odd numbers
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 != 0) {
+                oddsum += i;
+            }
+        }
+        printf("Sum of odd numbers: %d\n", oddsum);
+        _exit(0); // Ensure the child process exits
+    } else if (pid > 0) {
+        // Parent process: Wait for the child process to finish
+        wait(NULL);
+
+        // Calculate the sum of even numbers
+        for (int i = 1; i <= n; i++) {
+            if (i % 2 == 0) {
+                evensum += i;
+            }
+        }
+        printf("Sum of even numbers: %d\n", evensum);
+    } else {
+        // Fork failed
+        printf("Fork failed!\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+----- getpid
+
+#include <stdio.h>
+#include <unistd.h>
+
+int main() {
+    int n;
+    printf("Enter the value of n: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        fork();
+    }
+
+    // Print process ID to observe child processes
+    printf("Process ID: %d\n", getpid());
+
+    // Sleep to allow observation of child processes
+    sleep(1);
+
+    return 0;
+}

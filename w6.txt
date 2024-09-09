@@ -1,0 +1,138 @@
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <unistd.h>  
+#include <stdio.h>   
+ 
+int main() {
+    int pid, semid;
+    struct sembuf sop;
+    semid = semget((key_t)6, 1, IPC_CREAT | 0666);
+    pid = fork();
+    sop.sem_num = 0;
+    sop.sem_op = 0;
+    sop.sem_flg = 0;
+ 
+    if (pid != 0) {
+        sleep(1); 
+        printf("The Parent waits for WAIT signal\n");
+        semop(semid, &sop, 1);
+        printf("The Parent WAKED UP & doing her job\n");
+        sleep(10);
+        printf("Parent Over\n");
+    } else {
+        printf("The Child sets WAIT signal & doing her job\n");
+        semctl(semid, 0, SETVAL, 1);
+        sleep(10);
+        printf("The Child sets WAKE signal & finished her job\n");
+        semctl(semid, 0, SETVAL, 0);
+        printf("Child Over\n");
+    }
+    return 0;
+}
+
+---------------
+
+#include <pthread.h>
+#include <stdio.h>
+#include <semaphore.h>
+#include <unistd.h>
+ 
+void *fun1();
+void *fun2();
+int shared = 1;
+sem_t s;
+ 
+int main() {
+    sem_init(&s, 0, 1);
+    pthread_t thread1, thread2;
+    pthread_create(&thread1, NULL, fun1, NULL);
+    sleep(1);
+    pthread_create(&thread2, NULL, fun2, NULL);
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    printf("Final value of shared is %d\n", shared);
+}
+ 
+void *fun1() {
+    int x;
+    sem_wait(&s);
+    x = shared;
+    printf("Thread1 reads the value as %d\n", x);
+    x++;
+    printf("Local updation by Thread1: %d\n", x);
+    sleep(1);
+    shared = x;
+    printf("Value of shared variable updated by Thread1 is: %d\n", shared);
+    sem_post(&s);
+}
+ 
+void *fun2() {
+    int y;
+    sem_wait(&s);
+    y = shared;
+    printf("Thread2 reads the value as %d\n", y);
+    y--;
+    printf("Local updation by Thread2: %d\n", y);
+    sleep(1);
+    shared = y;
+    printf("Value of shared variable updated by Thread2 is: %d\n", shared);
+    sem_post(&s);
+}
+
+-------------
+
+#include <pthread.h>
+#include <semaphore.h>
+#include <stdio.h>
+
+sem_t wrt;
+pthread_mutex_t mutex;
+int cnt = 1;
+int numreader = 0;
+
+void *writer(void *wno) {
+    sem_wait(&wrt);
+    cnt = cnt * 2;
+    printf("Writer %d modified cnt to %d\n", (*((int *)wno)), cnt);
+    sem_post(&wrt);
+}
+
+void *reader(void *rno) {
+    pthread_mutex_lock(&mutex);
+    numreader++;
+    if (numreader == 1) {
+        sem_wait(&wrt);
+    }
+    pthread_mutex_unlock(&mutex);
+    printf("Reader %d: read cnt as %d\n", *((int *)rno), cnt);
+    pthread_mutex_lock(&mutex);
+    numreader--;
+    if (numreader == 0) {
+        sem_post(&wrt);
+    }
+    pthread_mutex_unlock(&mutex);
+}
+
+int main() {
+    pthread_t read[10], write[5];
+    pthread_mutex_init(&mutex, NULL);
+    sem_init(&wrt, 0, 1);
+    int a[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    for (int i = 0; i < 10; i++) {
+        pthread_create(&read[i], NULL, reader, (void *)&a[i]);
+    }
+    for (int i = 0; i < 5; i++) {
+        pthread_create(&write[i], NULL, writer, (void *)&a[i]);
+    }
+    for (int i = 0; i < 10; i++) {
+        pthread_join(read[i], NULL);
+    }
+    for (int i = 0; i < 5; i++) {
+        pthread_join(write[i], NULL);
+    }
+
+    pthread_mutex_destroy(&mutex);
+    sem_destroy(&wrt);
+    return 0;
+}

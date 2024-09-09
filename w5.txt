@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <pthread.h>
+
+#define MAX_NUM 20
+
+int sum_odd = 0, sum_even = 0, sum_natural = 0;
+
+void sum_odd_numbers() {
+    printf("Odd numbers: ");
+    for (int i = 1; i <= MAX_NUM; i += 2) {
+        printf("%d ", i);
+        sum_odd += i;
+    }
+    printf("\n");
+}
+
+void sum_even_numbers() {
+    printf("Even numbers: ");
+    for (int i = 2; i <= MAX_NUM; i += 2) {
+        printf("%d ", i);
+        sum_even += i;
+    }
+    printf("\n");
+}
+
+void sum_natural_numbers() {
+    for (int i = 1; i <= MAX_NUM; i++) {
+        sum_natural += i;
+    }
+}
+
+int main() {
+    pthread_t thread1, thread2, thread3;
+
+    pthread_create(&thread1, NULL, (void *)sum_odd_numbers, NULL);
+    pthread_create(&thread2, NULL, (void *)sum_even_numbers, NULL);
+    pthread_create(&thread3, NULL, (void *)sum_natural_numbers, NULL);
+
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+    pthread_join(thread3, NULL);
+
+    printf("Sum of odd numbers: %d\n", sum_odd);
+    printf("Sum of even numbers: %d\n", sum_even);
+    printf("Sum of natural numbers: %d\n", sum_natural);
+
+    return 0;
+}
