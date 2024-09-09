@@ -1,0 +1,213 @@
+1. echo SRM ➔ to display the string SRM 
+2. clear ➔ to clear the screen 
+3. date ➔ to display the current date and time 
+4. cal 2003 ➔ to display the calendar for the year 2003 
+cal 6 2003 ➔ to display the calendar for the June-2003 
+5. passwd ➔ to change password 
+
+ 
+
+b) Working with Files 
+1. ls ➔ list files in the present working directory 
+ls –l ➔ list files with detailed information (long list) 
+ls –a ➔ list all files including the hidden files 
+
+ 
+
+2. cat > f1 ➔ to create a file (Press ^d to finish typing) 
+
+ 
+
+3. cat f1 ➔ display the content of the file f1 
+4. wc f1 ➔ list no. of characters, words & lines of a file f1 
+wc –c f1 ➔ list only no. of characters of file f1 
+wc –w f1 ➔ list only no. of words of file f1 
+wc –l f1 ➔ list only no. of lines of file f1 
+5. cp f1 f2 ➔ copy file f1 into f2 
+6. mv f1 f2 ➔ rename file f1 as f2 
+7. rm f1 ➔ remove the file f1 
+8. head –5 f1 ➔ list first 5 lines of the file f1 
+tail –5 f1 ➔ list last 5 lines of the file f1 
+
+ 
+
+c) Working with Directories 
+1. mkdir elias ➔ to create the directory elias 
+2. cd elias ➔ to change the directory as elias 
+3. rmdir elias ➔ to remove the directory elias 
+4. pwd ➔ to display the path of the present working directory 
+5. cd ➔ to go to the home directory 
+cd .. ➔ to go to the parent directory 
+cd - ➔ to go to the previous working directory 
+cd / ➔ to go to the root directory 
+d) File name substitution 
+1. ls f? ➔ list files start with ‘f’ and followed by any one character 
+2. ls *.c ➔ list files with extension ‘c’ 
+3. ls [gpy]et ➔ list files whose first letter is any one of the character g, p 
+or y and followed by the word et 
+
+ 
+
+4. ls [a-d,l-m]ring ➔ list files whose first letter is any one of the character 
+from a to d and l to m and followed by the word ring. 
+
+ 
+
+e) I/O Redirection 
+1. Input redirection 
+wc –l < ex1 ➔ To find the number of lines of the file ‘ex1’ 
+
+ 
+
+2. Output redirection 
+who > f2 ➔ the output of ‘who’ will be redirected to file f2 
+3. cat >> f1 ➔ to append more into the file f1 
+
+ 
+
+ 
+
+f) Piping 
+Syntax : Command1 | command2 
+
+ 
+
+Output of the command1 is transferred to the command2 as input. Finally 
+output of the command2 will be displayed on the monitor. 
+
+ 
+
+ex. cat f1 | more ➔ list the contents of file f1 screen by screen 
+head –6 f1 |tail –2 ➔ prints the 5th & 6th lines of the file f1. 
+
+ 
+
+g) Environment variables 
+1. echo $HOME ➔ display the path of the home directory 
+2. echo $PS1 ➔ display the prompt string $ 
+3. echo $PS2 ➔ display the second prompt string ( > symbol by default ) 
+4. echo $LOGNAME ➔ login name 
+
+ h) File Permission 
+-- chmod command is used to change the access permission of a file. 
+
+ 
+
+Method-1 
+Syntax : chmod [ugo] [+/-] [ rwxa ] filename 
+
+ 
+
+u : user, g : group, o : others 
++ : Add permission - : Remove the 
+permission r : read, w : write, x : 
+execute, a : all permissions 
+
+ 
+
+ex. chmod ug+rw f1 
+adding ‘read & write’ permissions of file f1 to both user 
+and group members. 
+
+ 
+
+Method-2 
+Syntax : chmod octnum file1 
+
+ 
+
+The 3 digit octal number represents as follows 
+ first digit -- file permissions for the user 
+ second digit -- file permissions for the group 
+ third digit -- file permissions for others 
+
+FILTERS 
+
+ 
+
+1. cut 
+■ Used to cut characters or fileds from a file/input 
+
+ 
+
+Syntax : cut -cchars filename 
+-ffieldnos filename 
+
+ 
+
+■ By default, tab is the filed separator(delimiter). If the fileds of the files are separated by 
+any other character, we need to specify explicitly by –d option 
+
+ 
+
+cut -ddelimitchar -ffileds filname 
+
+ 
+
+2. grep 
+■ Used to search one or more files for a particular pattern. 
+
+ 
+
+Syntax : grep pattern filename(s) 
+
+ 
+
+Lines that contain the pattern in the file(s) get displayed 
+pattern can be any regular expressions 
+More than one files can be searched for a pattern 
+
+ 
+
+-v option displays the lines that do not contain the pattern 
+-l list only name of the files that contain the pattern 
+-n displays also the line number along with the lines that matches the pattern 
+
+ 
+
+3. sort 
+■ Used to sort the file in order 
+
+ 
+
+Syntax : sort filename 
+
+ 
+
+Sorts the data as text by default 
+Sorts by the first filed by default 
+
+ 
+
+-r option sorts the file in descending order 
+-u eliminates duplicate lines 
+-o filename writes sorted data into the file fname 
+-tdchar sorts the file in which fileds are separated by dchar 
+-n sorts the data as number 
++1n skip first filed and sort the file by second filed numerically 
+
+ 
+
+4. Uniq 
+■ Displays unique lines of a sorted file 
+Syntax : uniq filename 
+
+SYSTEM ADMIN COMMANDS 
+
+ 
+
+INSTALLING SOFTWARE 
+To Update the package repositories 
+sudo apt-get update 
+To update installed software 
+sudo apt-get upgrade 
+To install a package/software 
+sudo apt-get install <package-name> 
+To remove a package from the system 
+sudo apt-get remove <package-name> 
+To reinstall a package 
+sudo apt-get install <package-name> --reinstall 
+
+5. echo $PATH ➔ list of pathname where the OS searches for an 
+executable file 
+
